@@ -50,11 +50,14 @@
     - include: tasks/apparmor.yml
 
     # Checkout ubnext code
-    #- include: tasks/install-site.yml
-    #  when: install_site
+    - include: tasks/drupal7-ubn-dev.yml
+      when: drupal_deploy
+
+    # Checkout ubnext code
+    # - include: tasks/drupal7-ubn-dev-db.yml
+    # when: drupal_deploy and drupal_deploy_db
 
     # Import ubnext production database
-    
 
     - include: tasks/drush-aliases.yml
     - include: tasks/cron.yml

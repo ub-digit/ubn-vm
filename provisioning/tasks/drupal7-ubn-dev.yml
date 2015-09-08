@@ -1,0 +1,7 @@
+---
+- name: Clone UBNext from GitHub
+  git:
+    repo: "{{ drupal_git_repo }}"
+    dest: "{{ drupal_git_checkout_path  }}"
+    version: "{{ drupal_git_version }}"
+    update: "yes"

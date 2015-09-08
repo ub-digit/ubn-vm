@@ -6,13 +6,19 @@
  * @see example.aliases.drushrc.php.
  */
 
-{% for vhost in apache_vhosts %}
-$aliases['{{ vhost.servername }}'] = array(
-  'uri' => '{{ vhost.servername }}',
-  'root' => '{{ vhost.documentroot }}',
-  'remote-host' => '{{ vhost.servername }}',
+/* UBN-VM local development */
+$aliases['{{ drupal_domain }}'] = array(
+  'uri' => '{{ drupal_domain }}',
+  'root' => '{{ drupal_core_path }}',
+  'remote-host' => '{{ drupal_domain }}',
   'remote-user' => 'vagrant',
   'ssh-options' => '-o PasswordAuthentication=no -i ~/.vagrant.d/insecure_private_key',
 );
 
-{% endfor %}
+/* UBN production */
+$aliases['{{ drupal_production_domain }}'] = array(
+  'uri' => '{{ drupal_production_domain }}',
+  'root' => '{{ drupal_production_core_path }}',
+  'remote-host' => '{{ drupal_production_domain }}',
+  'remote-user' => '{{ drupal_production_user }}',
+);
