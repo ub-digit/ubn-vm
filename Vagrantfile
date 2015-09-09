@@ -62,6 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.provision "ansible" do |ansible|
       ansible.playbook = "#{dir}/provisioning/playbook.yml"
       ansible.sudo = true
+      ansible.raw_ssh_args = ['-o ForwardAgent=yes'] #VS config.ssh.forward_agent?
       # ansible.verbose = "vvv"
     end
   # Provision using shell provisioner and JJG-Ansible-Windows otherwise.

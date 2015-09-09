@@ -43,9 +43,9 @@ drupal_git_branch: "master" #TODO: should probably create and switch to dev/deve
 drupal_git_version: "HEAD"
 
 # Drupal production instance settings
-drupal_production_core_path: ""
-drupal_production_domain: ""
-drupal_production_user: ""
+drupal_production_core_path: "/var/drupal/platforms/m-test.current"
+drupal_production_domain: "m-test.ub.gu.se"
+# (drupal_production_user set from prompt) 
 
 
 # Cron jobs are added to the root user's crontab. Keys include name (required),
@@ -92,13 +92,13 @@ mysql_users:
 # Comment out any extra utilities you don't want to install. If you don't want
 # to install *any* extras, make set this value to an empty set, e.g. `[]`.
 installed_extras:
-#  - adminer
+  # - adminer
   - mailhog
-#  - memcached
+  # - memcached
   - pimpmylog
-# - selenium
-# - solr
-# - varnish
+  # - selenium
+  # - solr
+  # - varnish
   - xdebug
   - xhprof
 

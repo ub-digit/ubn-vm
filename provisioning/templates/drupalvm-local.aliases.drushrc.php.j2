@@ -11,3 +11,11 @@ $aliases['{{ drupal_domain }}'] = array(
   'uri' => '{{ drupal_domain }}',
   'root' => '{{ drupal_core_path }}',
 );
+
+/* UBN production */
+$aliases['{{ drupal_production_domain }}'] = array(
+  'uri' => '{{ drupal_production_domain }}',
+  'root' => '{{ drupal_production_core_path }}',
+  'remote-host' => '{{ drupal_production_domain }}',
+  'remote-user' => '{{ drupal_production_user }}',
+);
