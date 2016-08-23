@@ -1,25 +1,50 @@
-# -*- mode: ruby -*- vi: set ft=ruby :
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 VAGRANTFILE_API_VERSION = "2"
+Vagrant.require_version '>= 1.8.1'
+
+# Absolute paths on the host machine.
+host_config_dir = File.dirname(File.expand_path(__FILE__))
 
 # Cross-platform way of finding an executable in the $PATH.
 def which(cmd)
   exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
   ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
-    exts.each { |ext|
+    exts.each do |ext|
       exe = File.join(path, "#{cmd}#{ext}")
       return exe if File.executable?(exe) && !File.directory?(exe)
-    }
+    end
   end
-  return nil
+  nil
 end
 
-# Use config.yml for basic VM configuration.
-require 'yaml'
-dir = File.dirname(File.expand_path(__FILE__))
-if !File.exist?("#{dir}/config.yml")
-  raise 'Configuration file not found!'
+def walk(obj, &fn)
+  if obj.is_a?(Array)
+    obj.map { |value| walk(value, &fn) }
+  elsif obj.is_a?(Hash)
+    obj.each_pair { |key, value| obj[key] = walk(value, &fn) }
+  else
+    obj = yield(obj)
+  end
 end
-vconfig = YAML::load_file("#{dir}/config.yml")
+
+require 'yaml'
+# Load default VM configurations.
+vconfig = YAML.load_file("#{host_config_dir}/default.config.yml")
+# Use optional config.yml and local.config.yml for configuration overrides.
+['config.yml', 'local.config.yml'].each do |config_file|
+  if File.exist?("#{host_config_dir}/#{config_file}")
+    vconfig.merge!(YAML.load_file("#{host_config_dir}/#{config_file}"))
+  end
+end
+
+# Replace jinja variables in config.
+vconfig = walk(vconfig) do |value|
+  while value.is_a?(String) && value.match(/{{ .* }}/)
+    value = value.gsub(/{{ (.*?) }}/) { vconfig[Regexp.last_match(1)] }
+  end
+  value
+end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = vconfig['vagrant_hostname']
@@ -35,33 +60,38 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = vconfig['vagrant_box']
 
   # If hostsupdater plugin is installed, add all servernames as aliases.
-  if Vagrant.has_plugin?("vagrant-hostsupdater")
-    config.hostsupdater.aliases = []
-    for host in vconfig['apache_vhosts']
-      # Add all the hosts that aren't defined as Ansible vars.
-      unless host['servername'].include? "{{"
-        #puts "Adding host %s" % [host['servername']]
-        config.hostsupdater.aliases.push(host['servername'])
-      end
+  if Vagrant.has_plugin?('vagrant-hostmanager')
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.manage_guest = false
+    config.hostmanager.aliases = []
+    vconfig['apache_vhosts'].each do |host|
+      config.hostmanager.aliases.push(host['servername'])
+      config.hostmanager.aliases.concat(host['serveralias'].split) if host['serveralias']
     end
   end
 
-  for synced_folder in vconfig['vagrant_synced_folders'];
-    config.vm.synced_folder synced_folder['local_path'], synced_folder['destination'],
+  vconfig['vagrant_synced_folders'].each do |synced_folder|
+    options = {
       type: synced_folder['type'],
-      rsync__auto: "true",
+      rsync__auto: 'true',
       rsync__exclude: synced_folder['excluded_paths'],
-      rsync__args: ["--verbose", "--archive", "--delete", "-z", "--chmod=ugo=rwX"],
+      rsync__args: ['--verbose', '--archive', '--delete', '-z', '--chmod=ugo=rwX'],
       id: synced_folder['id'],
       create: synced_folder.include?('create') ? synced_folder['create'] : false,
-      mount_options: synced_folder.include?('mount_options') ? synced_folder['mount_options'] : []
+      mount_options: synced_folder.include?('mount_options') ? synced_folder['mount_options'] : nil
+    }
+    if synced_folder.include?('options_override')
+      options = options.merge(synced_folder['options_override'])
+    end
+    config.vm.synced_folder synced_folder['local_path'], synced_folder['destination'], options
   end
 
   # Provision using Ansible provisioner if Ansible is installed on host.
   if which('ansible-playbook')
     config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "#{dir}/provisioning/playbook.yml"
-      ansible.sudo = true
+      ansible.playbook = "#{host_config_dir}/provisioning/playbook.yml"
+      ansible.sudo = true #???
       ansible.raw_ssh_args = ['-o ForwardAgent=yes'] #VS config.ssh.forward_agent?
       # ansible.verbose = "vvv"
     end

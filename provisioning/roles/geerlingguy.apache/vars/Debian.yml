@@ -1,4 +1,5 @@
 ---
+apache_service: apache2
 apache_daemon: apache2
 apache_daemon_path: /usr/sbin/
 apache_server_root: /etc/apache2
@@ -9,7 +10,5 @@ __apache_packages:
   - apache2-utils
 
 apache_ports_configuration_items:
-  - {
-    regexp: "^Listen ",
+  - regexp: "^Listen "
     line: "Listen {{ apache_listen_port }}"
-  }

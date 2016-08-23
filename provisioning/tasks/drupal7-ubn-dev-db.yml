@@ -8,11 +8,21 @@
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + drupal_production_domain) }}"
     regexp: "^{{ drupal_production_domain }}"
 
- - name: Test drush
-  command: >
-    {{ drush_path }} @{{ drupal_production_domain }} status
+- name: Test drush (with password)
+  expect:
+    command: {{ drush_path }} @{{ drupal_production_domain }} status
+    responses:
+      (?i)password: "{{ drupal_production_password }}"
+    #timeout: 
   #when: drupal_site.stat.exists == false
   sudo: no
   register: develop_drush_status
 
- - debug: var=develop_drush_status
+#- name: Test drush
+#  command: >
+#    {{ drush_path }} @{{ drupal_production_domain }} status
+  #when: drupal_site.stat.exists == false
+  #  sudo: no
+  # register: develop_drush_status
+
+- debug: var=develop_drush_status

@@ -6,11 +6,16 @@ Installs and configures MySQL or MariaDB server on RHEL/CentOS or Debian/Ubuntu 
 
 ## Requirements
 
-None.
+No special requirements; note that this role requires root access, so either run it in a playbook with a global `become: yes`, or invoke the role in your playbook like:
+
+    - hosts: database
+      roles:
+        - role: geerlingguy.mysql
+          become: yes
 
 ## Role Variables
 
-Available variables are listed below, along with default values (see `vars/main.yml`):
+Available variables are listed below, along with default values (see `defaults/main.yml`):
 
     mysql_user_home: /root
 
@@ -20,6 +25,12 @@ The home directory inside which Python MySQL settings will be stored, which Ansi
 
 The MySQL root user account password.
 
+    mysql_root_password_update: no
+
+Whether to force update the MySQL root user's password. By default, this role will only change the root user's password when MySQL is first configured. You can force an update by setting this to `yes`.
+
+> Note: If you get an error like `ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)` after a failed or interrupted playbook run, this usually means the root password wasn't originally updated to begin with. Try either removing  the `.my.cnf` file inside the configured `mysql_user_home` or updating it and setting `password=''` (the insecure default password). Run the playbook again, with `mysql_root_password_update` set to `yes`, and the setup should complete.
+
     mysql_enabled_on_startup: yes
 
 Whether MySQL should be enabled on startup.
@@ -28,13 +39,17 @@ Whether MySQL should be enabled on startup.
 
 Whether the global my.cnf should be overwritten each time this role is run. Setting this to `no` tells Ansible to only create the `my.cnf` file if it doesn't exist. This should be left at its default value (`yes`) if you'd like to use this role's variables to configure MySQL.
 
+    mysql_config_include_files: []
+
+A list of files that should override the default global my.cnf. Each item in the array requires a "src" parameter which is a path to a file. An optional "force" parameter can force the file to be updated each time ansible runs.
+
     mysql_databases: []
 
 The MySQL databases to create. A database has the values `name`, `encoding` (defaults to `utf8`), `collation` (defaults to `utf8_general_ci`) and `replicate` (defaults to `1`, only used if replication is configured). The formats of these are the same as in the `mysql_db` module.
 
     mysql_users: []
 
-The MySQL users and their privileges. A user has the values `name`, `host` (defaults to `localhost`), `password` and `priv` (defaults to `*.*:USAGE`). The formats of these are the same as in the `mysql_user` module.
+The MySQL users and their privileges. A user has the values `name`, `host` (defaults to `localhost`), `password`, `priv` (defaults to `*.*:USAGE`), `append_privs` (defaults to `no`),  `state`  (defaults to `present`). The formats of these are the same as in the `mysql_user` module.
 
     mysql_packages:
       - mysql
@@ -69,10 +84,11 @@ Slow query log settings. Note that the log file will be created by this role, bu
     mysql_table_open_cache: "256"
     [...]
 
-The rest of the settings in `defaults/main.yml` control MySQL's memory usage. The default values are tuned for a server where MySQL can consume ~512 MB RAM, so you should consider adjusting them to suit your particular server better.
+The rest of the settings in `defaults/main.yml` control MySQL's memory usage and some other common settings. The default values are tuned for a server where MySQL can consume ~512 MB RAM, so you should consider adjusting them to suit your particular server better.
 
     mysql_server_id: "1"
     mysql_max_binlog_size: "100M"
+    mysql_binlog_format: "ROW"
     mysql_expire_logs_days: "10"
     mysql_replication_role: ''
     mysql_replication_master: ''
@@ -82,26 +98,11 @@ Replication settings. Set `mysql_server_id` and `mysql_replication_role` by serv
 
 ### MariaDB usage
 
-This role works with either MySQL or a compatible version of MariaDB. On RHEL/CentOS 7+, the mariadb database engine was substituted as the default MySQL replacement package, so you should override the `mysql_packages` variable with the below configuration to make sure MariaDB is installed correctly.
+This role works with either MySQL or a compatible version of MariaDB. On RHEL/CentOS 7+, the mariadb database engine was substituted as the default MySQL replacement package. No modifications are necessary though all of the variables still reference 'mysql' instead of mariadb.
 
-#### RHEL/CentOS 7 MariaDB configuration
+#### Ubuntu 14.04 and 16.04 MariaDB configuration
 
-Set the following variables (at a minimum):
-
-    mysql_packages:
-      - mariadb
-      - mariadb-server
-      - mariadb-libs
-      - MySQL-python
-      - perl-DBD-MySQL
-    mysql_daemon: mariadb
-    mysql_log_error: /var/log/mariadb/mariadb.log
-    mysql_syslog_tag: mariadb
-    mysql_pid_file: /var/run/mariadb/mariadb.pid
-
-#### Ubuntu 14.04 MariaDB configuration
-
-Set the following variables (at a minimum):
+On Ubuntu, the package names are named differently, so the `mysql_package` variable needs to be altered. Set the following variables (at a minimum):
 
     mysql_packages:
       - mariadb-client
@@ -115,6 +116,7 @@ None.
 ## Example Playbook
 
     - hosts: db-servers
+      become: yes
       vars_files:
         - vars/main.yml
       roles:

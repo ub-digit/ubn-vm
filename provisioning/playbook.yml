@@ -2,11 +2,15 @@
 - hosts: all
 
   vars_files:
-    - ../config.yml
+    - ../default.config.yml
 
   vars_prompt:
     - name: "drupal_production_user"
       prompt: "Enter production server username"
+      private: yes
+      # Temporary fix to avoid ssh-forwarding sudo-issue mess
+    - name: "drupal_production_password"
+      prompt: "Enter production server password"
       private: yes
 
   pre_tasks:
@@ -14,32 +18,19 @@
 
   roles:
     # Essential roles.
-    - { role: geerlingguy.repo-remi, when: ansible_os_family == 'RedHat' }
     - geerlingguy.firewall
     - geerlingguy.git
-    - geerlingguy.postfix
     - geerlingguy.apache
+    - geerlingguy.apache-php-fpm
     - geerlingguy.mysql
     - geerlingguy.php
     - geerlingguy.php-pecl
     - geerlingguy.php-mysql
     - geerlingguy.composer
     - geerlingguy.drush
-    #- { role: geerlingguy.drupal-console, when: drupal_major_version > 7 }
 
     # Conditionally-installed roles.
-    - { role: geerlingguy.memcached, when: '"memcached" in installed_extras' }
-    - { role: geerlingguy.php-memcached, when: '"memcached" in installed_extras' }
     - { role: geerlingguy.php-xdebug, when: '"xdebug" in installed_extras' }
-    - { role: geerlingguy.php-xhprof, when: '"xhprof" in installed_extras' }
-    #- { role: geerlingguy.adminer, when: '"adminer" in installed_extras' }
-    - { role: geerlingguy.pimpmylog, when: '"pimpmylog" in installed_extras' }
-    - { role: geerlingguy.daemonize, when: '"mailhog" in installed_extras' }
-    - { role: geerlingguy.mailhog, when: '"mailhog" in installed_extras' }
-    - { role: geerlingguy.java, when: '"solr" in installed_extras or "selenium" in installed_extras' }
-    - { role: arknoll.selenium, when: '"selenium" in installed_extras' }
-    - { role: geerlingguy.solr, when: '"solr" in installed_extras' }
-    - { role: geerlingguy.varnish, when: '"varnish" in installed_extras' }
 
     # Roles for security and stability on production.
     # - { role: geerlingguy.security, when: extra_security_enabled }
@@ -50,20 +41,19 @@
       register: drupal_site
 
     - include: tasks/sshd.yml
-    - include: tasks/extras.yml
     - include: tasks/www.yml
     - include: tasks/apparmor.yml
 
     # Checkout ubnext code
-    - include: tasks/drupal7-ubn-dev.yml
-      when: drupal_deploy
+    # - include: tasks/drupal7-ubn-dev.yml
+    #  when: drupal_deploy
 
     # Configure drush aliases
     - include: tasks/drush-aliases.yml
 
     # Import database from production
-    - include: tasks/drupal7-ubn-dev-db.yml
-      when: drupal_deploy and drupal_deploy_db
-    
+    # - include: tasks/drupal7-ubn-dev-db.yml
+    #  when: drupal_deploy and drupal_deploy_db
+
     # Setup drupal cron
     - include: tasks/cron.yml

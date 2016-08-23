@@ -8,7 +8,7 @@ engine = On
 short_open_tag = {{ php_short_open_tag }}
 asp_tags = Off
 precision = 14
-output_buffering = 4096
+output_buffering = {{ php_output_buffering }}
 
 zlib.output_compression = Off
 
@@ -64,6 +64,7 @@ auto_prepend_file =
 auto_append_file =
 
 default_mimetype = "text/html"
+always_populate_raw_post_data = -1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Paths and Directories ;
@@ -88,7 +89,7 @@ max_file_uploads = 20
 ; Fopen wrappers ;
 ;;;;;;;;;;;;;;;;;;
 
-allow_url_fopen = On
+allow_url_fopen = {{ php_allow_url_fopen }}
 allow_url_include = Off
 
 default_socket_timeout = 60
@@ -170,22 +171,23 @@ pgsql.log_notice = 0
 bcmath.scale = 0
 
 [Session]
-session.save_handler = files
+session.save_handler = {{ php_session_save_handler }}
+session.save_path = {{ php_session_save_path }}
 session.use_cookies = 1
 session.use_only_cookies = 1
 session.name = PHPSESSID
 session.auto_start = 0
 
-session.cookie_lifetime = 0
+session.cookie_lifetime = {{ php_session_cookie_lifetime }}
 session.cookie_path = /
 session.cookie_domain =
 session.cookie_httponly =
 
 session.serialize_handler = php
 
-session.gc_probability = 1
-session.gc_divisor = 1000
-session.gc_maxlifetime = 1440
+session.gc_probability = {{ php_session_gc_probability }}
+session.gc_divisor = {{ php_session_gc_divisor }}
+session.gc_maxlifetime = {{ php_session_gc_maxlifetime }}
 
 session.bug_compat_42 = Off
 session.bug_compat_warn = Off

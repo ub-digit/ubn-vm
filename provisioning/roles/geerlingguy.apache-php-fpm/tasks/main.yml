@@ -1,0 +1,3 @@
+---
+# Configuration tasks.
+- include: configure-Debian.yml

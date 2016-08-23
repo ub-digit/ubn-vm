@@ -9,19 +9,12 @@
     - python-apt
     - python-pycurl
     - build-essential
+    - sudo
+    - unzip
+    - vim-nox
+    - nmap #Perhaps no need for this
+    - redis-server #TODO: this is not the place for this, make sure service is started etc
 
 - name: Disable the ufw firewall (since we use a simple iptables firewall).
   service: name=ufw state=stopped
-
-# - name: Add repository for PHP 5.5.
-# apt_repository: repo='ppa:ondrej/php5'
-#  when: php_version == "5.5"
-
-- name: Add repository for PHP 5.6.
-  apt_repository: repo='ppa:ondrej/php5-5.6'
-#  when: php_version == "5.6"
-
-# Experimental.
-# - name: Add repository for PHP 7.0.
-#  apt_repository: repo='ppa:ondrej/php-7.0'
-#  when: php_version == "7.0"
+  when: ansible_distribution == "Ubuntu"
