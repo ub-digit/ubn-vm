@@ -78,6 +78,8 @@ apache_remove_default_vhost: true
 apache_mods_enabled:
   - expires.load
   - rewrite.load
+apache_mods_disabled:
+  - ssl.load
 
 # MySQL Databases and users. If build_from_makefile is true, first database will
 # be used for the makefile-built site.
