@@ -1,0 +1,31 @@
+---
+
+- name: restart nginx
+  debug: msg="checking config first"
+  changed_when: True
+  notify:
+    - check nginx configuration
+    - restart nginx - after config check
+
+- name: reload nginx
+  debug: msg="checking config first"
+  changed_when: True
+  notify:
+    - check nginx configuration
+    - reload nginx - after config check
+
+- name: check nginx configuration
+  shell: "{{ nginx_binary_name }} -t -c {{ nginx_conf_dir }}/nginx.conf"
+  register: result
+  changed_when: "result.rc != 0"
+  always_run: yes
+
+# Or "changed_when: False" works?
+
+- name: restart nginx - after config check
+  service: name={{ nginx_service_name }} state=restarted
+  when: nginx_daemon_mode == "on"
+
+- name: reload nginx - after config check
+  service: name={{ nginx_service_name }} state=reloaded
+  when: nginx_daemon_mode == "on"
