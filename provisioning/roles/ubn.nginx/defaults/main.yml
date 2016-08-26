@@ -3,6 +3,8 @@
 nginx_official_repo: False
 nginx_official_repo_mainline: False
 
+keep_only_specified: False
+
 nginx_binary_name: "nginx"
 nginx_service_name: "{{nginx_binary_name}}"
 nginx_conf_dir: "/etc/nginx"
