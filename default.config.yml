@@ -1,5 +1,8 @@
 ---
 # TODO: Separate vagrant and ansible settings ?
+
+### Vagrant ###
+
 vagrant_box: bento/ubuntu-16.04
 vagrant_user: vagrant
 
@@ -24,6 +27,10 @@ vagrant_synced_folders:
 vagrant_memory: 2048
 vagrant_cpus: 2
 
+### End Vagrant ###
+
+### UBNext ###
+
 # Drupal development VM instance settings
 drupal_core_path: "/srv/drupal7/ubnext/web"
 drupal_domain: "drupal7.ubn.dev"
@@ -46,8 +53,7 @@ drupal_git_version: "HEAD"
 # Drupal production instance settings
 drupal_production_core_path: "/var/drupal/platforms/m-test.current"
 drupal_production_domain: "m-test.ub.gu.se"
-# (drupal_production_user set from prompt) 
-
+# (drupal_production_user set from prompt)
 
 # Cron jobs are added to the root user's crontab. Keys include name (required),
 # minute, hour, day, weekday, month, job (required), and state.
@@ -62,6 +68,14 @@ ubnvm_cron_jobs:
 # this variable is 'true'.
 configure_local_drush_aliases: true
 
+### End UBNext ###
+
+### NGINX ###
+
+### END NGINX ###
+
+### Apache ###
+
 # Apache VirtualHosts. Add one for each site you are running inside the VM. For
 # multisite deployments, you can point multiple servernames at one documentroot.
 #
@@ -74,12 +88,68 @@ apache_vhosts:
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ drupal_core_path }}"
 
+apache_listen_port: 8080
 apache_remove_default_vhost: true
 apache_mods_enabled:
   - expires.load
   - rewrite.load
 apache_mods_disabled:
   - ssl.load
+
+### End Apache ###
+
+### Extra packages ###
+
+# Comment out any extra utilities you don't want to install. If you don't want
+# to install *any* extras, make set this value to an empty set, e.g. `[]`.
+installed_extras:
+  - xdebug
+  # - xhprof
+
+### End Extra packages ###
+
+# You can configure almost anything else on the server in the rest of this file.
+# extra_security_enabled: false
+
+### Drush ###
+drush_version: master
+drush_keep_updated: true
+drush_composer_cli_options: "--prefer-dist --no-interaction"
+### End Drush ###
+
+### Firewall ###
+firewall_allowed_tcp_ports:
+  - "22"
+  - "25"
+  - "80"
+  - "443"
+# firewall_log_dropped_packets: false
+### End Firewall ###
+
+### PHP7 ###
+php_memory_limit: "256M"
+php_display_errors: "On"
+php_display_startup_errors: "On"
+php_realpath_cache_size: "1024K"
+php_sendmail_path: "/usr/sbin/ssmtp -t"
+php_opcache_enabled_in_ini: true
+php_opcache_memory_consumption: "192"
+php_opcache_max_accelerated_files: 4096
+php_max_input_vars: "4000"
+### End PHP7 ###
+
+### Composer ###
+composer_path: /usr/bin/composer
+composer_home_path: '/home/vagrant/.composer'
+# composer_global_packages:
+#   - { name: phpunit/phpunit, release: '@stable' }
+### End Composer ###
+
+### MySQL ###
+mysql_root_password: root
+mysql_slow_query_log_enabled: false
+mysql_slow_query_time: 2
+mysql_wait_timeout: 300
 
 # MySQL Databases and users. If build_from_makefile is true, first database will
 # be used for the makefile-built site.
@@ -93,58 +163,9 @@ mysql_users:
     host: "%"
     password: "{{ drupal_mysql_password }}"
     priv: "{{ drupal_mysql_database }}.*:ALL"
+### End MySQL ###
 
-# Comment out any extra utilities you don't want to install. If you don't want
-# to install *any* extras, make set this value to an empty set, e.g. `[]`.
-installed_extras:
-  - xdebug
-  # - xhprof
-
-# You can configure almost anything else on the server in the rest of this file.
-# extra_security_enabled: false
-
-drush_version: master
-drush_keep_updated: true
-drush_composer_cli_options: "--prefer-dist --no-interaction"
-
-# firewall_allowed_tcp_ports:
-#  - "22"
-#  - "25"
-#  - "80"
-#  - "81"
-#  - "443"
-#  - "4444"
-#  - "8025"
-#  - "8080"
-#  - "8443"
-#  - "8983"
-# firewall_log_dropped_packets: false
-
-# PHP Configuration. Currently-supported versions: 5.5, 5.6, 7.0 (experimental).
-php_version: "5.6"
-php_memory_limit: "256M"
-php_display_errors: "On"
-php_display_startup_errors: "On"
-php_realpath_cache_size: "1024K"
-php_sendmail_path: "/usr/sbin/ssmtp -t"
-php_opcache_enabled_in_ini: true
-php_opcache_memory_consumption: "192"
-php_opcache_max_accelerated_files: 4096
-php_max_input_vars: "4000"
-
-composer_path: /usr/bin/composer
-composer_home_path: '/home/vagrant/.composer'
-# composer_global_packages:
-#   - { name: phpunit/phpunit, release: '@stable' }
-
-# MySQL Configuration.
-mysql_root_password: root
-mysql_slow_query_log_enabled: false
-mysql_slow_query_time: 2
-mysql_wait_timeout: 300
-# adminer_add_apache_config: true
-
-# XDebug configuration. XDebug is disabled by default for better performance.
+### XDebug ###
 php_xdebug_default_enable: 0
 php_xdebug_coverage_enable: 0
 php_xdebug_cli_enable: 0
@@ -153,3 +174,4 @@ php_xdebug_remote_connect_back: 1
 # Use PHPSTORM for PHPStorm, sublime.xdebug for Sublime Text.
 php_xdebug_idekey: sublime.xdebug
 php_xdebug_max_nesting_level: 256
+### End XDebub ###
