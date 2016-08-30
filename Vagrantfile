@@ -3,8 +3,6 @@
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.require_version '>= 1.8.1'
 
-#TODO: glob stages config!!!!
-
 # Absolute paths on the host machine.
 host_config_dir = File.dirname(File.expand_path(__FILE__))
 
