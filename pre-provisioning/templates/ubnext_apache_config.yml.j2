@@ -1,0 +1,8 @@
+apache_vhosts:
+{% for stage, config in ubnext_stages.iteritems() %}
+  - servername: "{{ config.hostname }}"
+    serveralias: "www.{{ config.hostname }}"
+    documentroot: "{{ config.drupal_core_path }}"
+    extra_parameters: |
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ config.drupal_core_path }}"
+{% endfor %}

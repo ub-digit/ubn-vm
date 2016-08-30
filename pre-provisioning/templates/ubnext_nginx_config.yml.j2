@@ -1,0 +1,15 @@
+nginx_sites:
+{% for stage, config in ubnext_stages.iteritems() %}
+  {{ stage }}_http:
+    - listen 80
+    - server_name {{ config.hostname }}
+    - return 301 https://$server_name$request_uri
+  {{ stage }}_https:
+    - listen 443 ssl
+    - server_name {{ config.hostname }}
+    - include {{ nginx_conf_dir }}/ssl
+    - location / {
+        proxy_pass http://127.0.0.1:8080;
+        include {{ nginx_conf_dir }}/ssl_proxy;
+    }
+{% endfor %}

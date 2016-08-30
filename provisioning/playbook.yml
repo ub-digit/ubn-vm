@@ -3,6 +3,11 @@
 
   vars_files:
     - ../default.config.yml
+    - ../ubnext_stages.config.yml
+    - ../stages_config/ubnext_apache_config.yml
+    - ../stages_config/ubnext_drupal_crontab.yml
+    - ../stages_config/ubnext_mysql_databases.yml
+    - ../stages_config/ubnext_nginx_config.yml
 
   vars_prompt:
     - name: "drupal_production_user"
@@ -14,6 +19,9 @@
       private: yes
 
   pre_tasks:
+    #- include_vars: "{{ item }}"
+    #  with_fileglob:
+    #    - ../stages_config/*.yml
     - include: tasks/init-debian.yml
 
   roles:

@@ -1,0 +1,16 @@
+# MySQL Databases and users. If build_from_makefile is true, first database will
+# be used for the makefile-built site.
+mysql_databases:
+{% for stage, config in ubnext_stages.iteritems() %}
+  - name: "ubn_{{ stage }}"
+    encoding: utf8
+    collation: utf8_general_ci
+{% endfor %}
+
+mysql_users:
+{% for stage, config in ubnext_stages.iteritems() %}
+  - name: "ubn_{{ stage }}"
+    host: "%"
+    password: "TODO (Change me)" # Read from file
+    priv: "ubn_{{ stage }}.*:ALL"
+{% endfor %}

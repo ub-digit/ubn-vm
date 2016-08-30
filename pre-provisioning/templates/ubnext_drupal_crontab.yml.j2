@@ -1,0 +1,10 @@
+# Cron jobs are added to the root user's crontab. Keys include name (required),
+# minute, hour, day, weekday, month, job (required), and state.
+ubnvm_cron_jobs:
+{% for stage, config in ubnext_stages.iteritems() %}
+  - {
+    name: "UBNext {{ stage }} Drupal Cron",
+    minute: "*/15",
+    job: "drush -r {{ config.drupal_core_path }} core-cron"
+  }
+{% endfor %}

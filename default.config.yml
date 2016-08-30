@@ -32,8 +32,6 @@ vagrant_cpus: 2
 ### UBNext ###
 
 # Drupal development VM instance settings
-drupal_core_path: "/srv/drupal7/ubnext/web"
-drupal_domain: "drupal7.ubn.dev"
 # TODO: provision more devel settings and/or modules 
 drupal_enable_modules: [ 'devel' ]
 drupal_account_name: ubnadmin
@@ -55,15 +53,6 @@ drupal_production_core_path: "/var/drupal/platforms/m-test.current"
 drupal_production_domain: "m-test.ub.gu.se"
 # (drupal_production_user set from prompt)
 
-# Cron jobs are added to the root user's crontab. Keys include name (required),
-# minute, hour, day, weekday, month, job (required), and state.
-ubnvm_cron_jobs:
-  - {
-    name: "UBNext Drupal Cron",
-    minute: "*/15",
-    job: "drush -r {{ drupal_core_path }} core-cron"
-  }
-
 # Drupal VM automatically creates a drush alias file in your ~/.drush folder if
 # this variable is 'true'.
 configure_local_drush_aliases: true
@@ -71,7 +60,24 @@ configure_local_drush_aliases: true
 ### End UBNext ###
 
 ### NGINX ###
-
+nginx_conf_dir: "/etc/nginx"
+nginx_includes:
+  ssl:
+    - add_header Strict-Transport-Security "max-age=60; includeSubDomains" always
+    - "# https://bjornjohansen.no/optimizing-https-nginx"
+    - ssl_session_cache shared:SSL:20m
+    - ssl_session_timeout 180m
+    - ssl_prefer_server_ciphers on
+    - "# \"You'll lose support for all versions of Internet Explorer on Windows XP. Who cares?\", I do?"
+    - ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5
+    - "# To protect against https://en.wikipedia.org/wiki/POODLE"
+    - ssl_protocols TLSv1 TLSv1.1 TLSv1.2
+  ssl_proxy:
+    - proxy_set_header X-Real-IP  $remote_addr
+    - proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for
+    - proxy_set_header X-Forwarded-Proto https
+    - proxy_set_header X-Forwarded-Port 443
+    - proxy_set_header Host $host
 ### END NGINX ###
 
 ### Apache ###
@@ -81,13 +87,6 @@ configure_local_drush_aliases: true
 #
 # Could use "{{ drupal_domain }}" for drupal vhost entry, but then will be
 # impossible for vagrant-hostupdater to figure out hostname
-apache_vhosts:
-  - servername: "{{ drupal_domain }}"
-    serveralias: "www.{{ drupal_domain }}"
-    documentroot: "{{ drupal_core_path }}"
-    extra_parameters: |
-          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ drupal_core_path }}"
-
 apache_listen_port: 8080
 apache_remove_default_vhost: true
 apache_mods_enabled:
@@ -151,18 +150,6 @@ mysql_slow_query_log_enabled: false
 mysql_slow_query_time: 2
 mysql_wait_timeout: 300
 
-# MySQL Databases and users. If build_from_makefile is true, first database will
-# be used for the makefile-built site.
-mysql_databases:
-  - name: "{{ drupal_mysql_database }}"
-    encoding: utf8
-    collation: utf8_general_ci
-
-mysql_users:
-  - name: "{{ drupal_mysql_user }}"
-    host: "%"
-    password: "{{ drupal_mysql_password }}"
-    priv: "{{ drupal_mysql_database }}.*:ALL"
 ### End MySQL ###
 
 ### XDebug ###

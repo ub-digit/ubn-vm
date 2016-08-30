@@ -1,0 +1,5 @@
+---
+ubnext_stages:
+  devel:
+    hostname: drupal7.ubn.dev
+    drupal_core_path: "/srv/drupal7/ubnext/web"

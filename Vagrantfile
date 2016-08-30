@@ -3,6 +3,8 @@
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.require_version '>= 1.8.1'
 
+#TODO: glob stages config!!!!
+
 # Absolute paths on the host machine.
 host_config_dir = File.dirname(File.expand_path(__FILE__))
 
@@ -31,6 +33,12 @@ end
 require 'yaml'
 # Load default VM configurations.
 vconfig = YAML.load_file("#{host_config_dir}/default.config.yml")
+
+# Load stages configs
+Dir.glob("#{host_config_dir}/stages_config/*.yml") do |stages_config_file_path|
+    vconfig.merge!(YAML.load_file(stages_config_file_path))
+end
+
 # Use optional config.yml and local.config.yml for configuration overrides.
 ['config.yml', 'local.config.yml'].each do |config_file|
   if File.exist?("#{host_config_dir}/#{config_file}")
