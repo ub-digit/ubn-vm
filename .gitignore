@@ -2,6 +2,7 @@
 .vagrant/
 /todo
 /stages_config/*
+playbook.retry
 
 # Ignore temporary vim files
 *~
