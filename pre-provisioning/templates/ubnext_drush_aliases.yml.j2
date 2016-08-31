@@ -1,0 +1,13 @@
+#jinja2: lstrip_blocks: True
+drush_aliases:
+{% for stage, config in ubnext_stages.iteritems() %}
+  {{config.hostname}}:
+    uri: {{ config.hostname }}
+    root: {{ config.drupal_core_path }}
+    remote-host: {{ config.hostname }}
+  {% if 'drush_alias_options' in config %}
+    {% for key, option in config.drush_alias_options.iteritems() %}
+    {{key}}: {{ option }}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
