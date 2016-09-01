@@ -8,6 +8,7 @@
     - ../stages_config/ubnext_drupal_crontab.yml
     - ../stages_config/ubnext_mysql_databases.yml
     - ../stages_config/ubnext_nginx_config.yml
+    - ../stages_config/ubnext_drush_aliases.yml
 
   vars_prompt:
     - name: "drupal_production_user"
@@ -28,6 +29,7 @@
     # Essential roles.
     - geerlingguy.firewall
     - geerlingguy.git
+    - ubn.nginx
     - geerlingguy.apache
     - geerlingguy.apache-php-fpm
     - geerlingguy.mysql
@@ -44,10 +46,6 @@
     # - { role: geerlingguy.security, when: extra_security_enabled }
 
   tasks:
-    - name: Check if Drupal is already set up.
-      stat: "path={{ drupal_core_path }}/index.php"
-      register: drupal_site
-
     - include: tasks/sshd.yml
     - include: tasks/www.yml
     - include: tasks/apparmor.yml
