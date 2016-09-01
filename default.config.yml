@@ -32,7 +32,10 @@ vagrant_cpus: 2
 ### UBNext ###
 
 # Drupal development VM instance settings
-# TODO: provision more devel settings and/or modules 
+# Drupal development VM instance settings
+drupal_core_path: "/srv/drupal7/ubnext/web"
+drupal_domain: "drupal7.ubn.dev"
+# TODO: provision more devel settings and/or modules
 drupal_enable_modules: [ 'devel' ]
 drupal_account_name: ubnadmin
 drupal_account_pass: ubnadmin
