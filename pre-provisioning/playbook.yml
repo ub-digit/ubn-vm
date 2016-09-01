@@ -9,36 +9,26 @@
       template:
         src: ubnext_nginx_config.yml.j2
         dest: "{{ playbook_dir }}/../stages_config/ubnext_nginx_config.yml"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
         mode: 0644
     - name: Generate Apache config
       template:
         src: ubnext_apache_config.yml.j2
         dest: "{{ playbook_dir }}/../stages_config/ubnext_apache_config.yml"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
         mode: 0644
     - name: Generate Drupal crontab
       template:
         src: ubnext_drupal_crontab.yml.j2
         dest: "{{ playbook_dir }}/../stages_config/ubnext_drupal_crontab.yml"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
         mode: 0644
     - name: Generate MySQL databases config
       template:
         src: ubnext_mysql_databases.yml.j2
         dest: "{{ playbook_dir }}/../stages_config/ubnext_mysql_databases.yml"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
         mode: 0644
     - name: Generate Drush aliases config
       template:
         src: ubnext_drush_aliases.yml.j2
         dest: "{{ playbook_dir }}/../stages_config/ubnext_drush_aliases.yml"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
         mode: 0644
     #- name: Generate NGINX config
     #- name: Generate UBNext config
