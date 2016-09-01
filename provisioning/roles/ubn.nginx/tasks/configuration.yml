@@ -25,7 +25,7 @@
   tags: [configuration,nginx]
 
 - name: Create the configurations for configuration include file
-  template: src=config.conf.j2 dest={{nginx_conf_dir}}/{{ item }}.conf
+  template: src=include.conf.j2 dest={{nginx_conf_dir}}/{{ item }}.conf
   with_items: "{{ nginx_includes.keys() }}"
   notify:
    - reload nginx

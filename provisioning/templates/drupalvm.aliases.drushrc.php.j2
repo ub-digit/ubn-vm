@@ -1,3 +1,4 @@
+#jinja2: lstrip_blocks: True
 <?php
 
 /**
@@ -6,18 +7,20 @@
  * @see example.aliases.drushrc.php.
  */
 /* UBN-VM local development */
-$aliases['{{ drupal_domain }}'] = array(
-  'uri' => '{{ drupal_domain }}',
-  'root' => '{{ drupal_core_path }}',
-  'remote-host' => '{{ drupal_domain }}',
-  'remote-user' => 'vagrant',
-  'ssh-options' => '-o PasswordAuthentication=no -i ~/.vagrant.d/insecure_private_key',
+{% for alias, options in drush_aliases.iteritems() %}
+$aliases['{{ alias }}'] = array(
+  {% for key, value in options.iteritems() %}
+  '{{ key }}' => '{{ value }}',
+  {% endfor %}
 );
+{% endfor %}
 
 /* UBN production */
-$aliases['{{ drupal_production_domain }}'] = array(
-  'uri' => '{{ drupal_production_domain }}',
-  'root' => '{{ drupal_production_core_path }}',
-  'remote-host' => '{{ drupal_production_domain }}',
-  'remote-user' => '{{ drupal_production_user }}',
+/*
+$aliases['\{\{ drupal_production_domain \}\}'] = array(
+  'uri' => '\{\{ drupal_production_domain \}\}',
+  'root' => '\{\{ drupal_production_core_path \}\}',
+  'remote-host' => '\{\{ drupal_production_domain \}\}',
+  'remote-user' => '\{\{ drupal_production_user \}\}',
 );
+*/
