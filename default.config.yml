@@ -32,10 +32,7 @@ vagrant_cpus: 2
 ### UBNext ###
 
 # Drupal development VM instance settings
-# Drupal development VM instance settings
-drupal_core_path: "/srv/drupal7/ubnext/web"
-drupal_domain: "drupal7.ubn.dev"
-# TODO: provision more devel settings and/or modules
+# TODO: provision more devel settings and/or modules 
 drupal_enable_modules: [ 'devel' ]
 drupal_account_name: ubnadmin
 drupal_account_pass: ubnadmin
@@ -66,7 +63,7 @@ configure_local_drush_aliases: true
 nginx_conf_dir: "/etc/nginx"
 nginx_includes:
   ssl:
-    - add_header Strict-Transport-Security "max-age=60; includeSubDomains" always
+    - "add_header Strict-Transport-Security \"max-age=60; includeSubDomains\" always"
     - "# https://bjornjohansen.no/optimizing-https-nginx"
     - ssl_session_cache shared:SSL:20m
     - ssl_session_timeout 180m

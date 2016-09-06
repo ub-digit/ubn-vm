@@ -8,8 +8,11 @@ nginx_sites:
     - listen 443 ssl
     - server_name {{ config.hostname }}
     - include {{ nginx_conf_dir }}/ssl.conf
+    - ssl_certificate /etc/nginx/cert/nginx.crt
+    - ssl_certificate_key /etc/nginx/cert/nginx.key
+    - ssl_dhparam /etc/nginx/cert/dhparam.pem
     - "location / {
-        proxy_pass http://127.0.0.1:8080;
         include {{ nginx_conf_dir }}/ssl_proxy.conf;
+        proxy_pass http://127.0.0.1:8080;
     }"
 {% endfor %}
