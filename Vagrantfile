@@ -33,7 +33,7 @@ require 'yaml'
 vconfig = YAML.load_file("#{host_config_dir}/default.config.yml")
 
 # Load stages configs
-Dir.glob("#{host_config_dir}/stages_config/*.yml") do |stages_config_file_path|
+Dir.glob("#{host_config_dir}/stages.config/*.yml") do |stages_config_file_path|
     vconfig.merge!(YAML.load_file(stages_config_file_path))
 end
 

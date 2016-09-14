@@ -1,0 +1,14 @@
+---
+ubnext_stages:
+  demo:
+    hostname: beta-demo.ub.gu.se
+    drupal_core_path: "/srv/ubnext/demo/current/web"
+  lab:
+    hostname: beta-lab.ub.gu.se
+    drupal_core_path: "/srv/ubnext/lab/current/web"
+  staging:
+    hostname: beta-staging.ub.gu.se
+    drupal_core_path: "/srv/ubnext/staging/current/web"
+  production:
+    hostname: beta.ub.gu.se
+    drupal_core_path: "/srv/ubnext/production/current/web"

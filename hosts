@@ -1,0 +1,4 @@
+production ansible_host=130.241.35.208
+
+[production_servers]
+production
