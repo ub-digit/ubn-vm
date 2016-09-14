@@ -1,8 +1,9 @@
 .DS_Store
 .vagrant/
 /todo
-/stages_config/*
+/stages.config/*
 playbook.retry
+/ubnext_stages.config.yml
 
 # Ignore temporary vim files
 *~
