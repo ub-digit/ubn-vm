@@ -1,7 +1,7 @@
 .DS_Store
 .vagrant/
 /todo
-/stages.config/*
+/stages.config/*.yml
 playbook.retry
 /ubnext_stages.config.yml
 
