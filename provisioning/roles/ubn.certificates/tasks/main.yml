@@ -1,0 +1,7 @@
+---
+
+- name: copy tls key file
+  copy: src={{ubn_key_file}} dest=/etc/ssl/private/{{ubn_key_file}} owner=root group=root mode=0400
+
+- name: copy tls certificate file
+  copy: src={{ubn_cert_file}} dest=/etc/ssl/certs/{{ubn_cert_file}} owner=root group=root mode=0644

@@ -13,8 +13,8 @@
     command: {{ drush_path }} @{{ drupal_production_domain }} status
     responses:
       (?i)password: "{{ drupal_production_password }}"
-    #timeout: 
-  sudo: no
+    #timeout:
+  become: no
   register: develop_drush_status
 
 #- name: Test drush

@@ -29,6 +29,7 @@
     # Essential roles.
     - geerlingguy.firewall
     - geerlingguy.git
+    - ubn.certificates
     - ubn.nginx
     - geerlingguy.apache
     - geerlingguy.apache-php-fpm

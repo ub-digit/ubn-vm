@@ -6,3 +6,6 @@ ubnext_stages:
     drush_alias_options:
       remote-user: vagrant
       ssh-options: -o PasswordAuthentication=no -i ~/.vagrant.d/insecure_private_key
+    tls:
+      cert_file: "/etc/ssl/certs/devel.crt.pem"
+      key_file: "/etc/ssl/private/devel.key.pem"
